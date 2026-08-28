@@ -15,23 +15,21 @@ export default function CadoraLayout() {
 
   return (
     <div className="min-h-screen bg-ink text-ivory">
-      <div className="fixed inset-x-0 top-0 z-[60] flex items-center justify-center px-6 py-6">
-        <button
-          className={`absolute right-6 p-2 transition-colors ${open ? 'text-ink hover:text-wine' : 'text-gold-soft hover:text-gold'}`}
-          onClick={() => setOpen((o) => !o)}
-          aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={open}
-          aria-haspopup="true"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            {open ? (
-              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-            ) : (
-              <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
-            )}
-          </svg>
-        </button>
-      </div>
+      <button
+        className={`fixed right-6 top-6 z-[60] p-2 transition-colors ${open ? 'text-ink hover:text-wine' : 'text-gold-soft hover:text-gold'}`}
+        onClick={() => setOpen((o) => !o)}
+        aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+        aria-expanded={open}
+        aria-haspopup="true"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          {open ? (
+            <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+          ) : (
+            <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
+          )}
+        </svg>
+      </button>
 
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center bg-parchment px-6 text-ink transition-all duration-700 ease-out ${

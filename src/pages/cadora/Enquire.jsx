@@ -135,16 +135,16 @@
 //   )
 // }
 
-import { useState } from "react";
-import PageHero from '../../components/PageHero.jsx'
+import { useEffect, useState } from "react";
 import {
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
+  Check,
   ChevronDown,
   ChevronUp,
-  Facebook,
-  Instagram,
+  // Facebook,
+  // Instagram,
   Mail,
   Menu,
   Phone,
@@ -201,11 +201,61 @@ const initialForm = {
   vision: "",
 };
 
+const eventTypes = [
+  "Wedding",
+  "Milestone Celebration",
+  "Private Party",
+  "Corporate Event",
+  "Destination Event",
+  "Other",
+];
+
+const years = ["2026", "2027", "2028", "2029", "2030"];
+
+const seasons = ["Spring", "Summer", "Autumn", "Winter"];
+
+const budgets = [
+  "₦5m - ₦10m",
+  "₦10m - ₦20m",
+  "₦20m - ₦50m",
+  "₦50m+",
+];
+
 export default function Enquire() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
   const [formData, setFormData] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  /*
+   * Prevent the page from scrolling while the mobile navigation
+   * is open.
+   */
+  useEffect(() => {
+    document.body.style.overflow = mobileMenu ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenu]);
+
+  /*
+   * Close mobile navigation when the viewport becomes desktop-sized.
+   */
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileMenu(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -216,34 +266,74 @@ export default function Enquire() {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("Cadaora Events enquiry:", formData);
+    if (isSubmitting) return;
 
-    setSubmitted(true);
+    setIsSubmitting(true);
 
-    window.scrollTo({
-      top: document.getElementById("enquiry")?.offsetTop - 80 || 0,
-      behavior: "smooth",
-    });
+    /*
+     * Replace this section with your real API / EmailJS / Formspree /
+     * backend submission logic.
+     *
+     * Example:
+     *
+     * await fetch("https://your-api.com/enquiries", {
+     *   method: "POST",
+     *   headers: {
+     *     "Content-Type": "application/json",
+     *   },
+     *   body: JSON.stringify(formData),
+     * });
+     */
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 700));
+
+      console.log("Cadaora Events enquiry:", formData);
+
+      setSubmitted(true);
+
+      requestAnimationFrame(() => {
+        document.getElementById("enquiry")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    } catch (error) {
+      console.error("Unable to submit enquiry:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({ ...initialForm });
+    setSubmitted(false);
   };
 
   const closeMobileMenu = () => {
     setMobileMenu(false);
   };
 
+  const toggleFaq = (index) => {
+    setOpenFaq((current) => (current === index ? null : index));
+  };
+
   return (
     <div className="min-h-screen bg-[#f8f5ef] text-[#211e1b]">
-      {/* =====================================================
-          NAVBAR
-      ====================================================== */}
+      {/* =========================================================
+          NAVIGATION
+      ========================================================== */}
+
       <header className="absolute left-0 top-0 z-50 w-full">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-7 md:px-10 lg:px-16">
-          {/* LOGO */}
+          {/* Logo */}
           <a
             href="#top"
             onClick={closeMobileMenu}
+            aria-label="Cadaora Events home"
             className="relative z-[60] block"
           >
             <div className="font-serif text-[30px] leading-none tracking-wide text-white md:text-[34px]">
@@ -255,8 +345,11 @@ export default function Enquire() {
             </div>
           </a>
 
-          {/* DESKTOP NAVIGATION */}
-          <nav className="hidden items-center gap-8 lg:flex">
+          {/* Desktop navigation */}
+          <nav
+            aria-label="Primary navigation"
+            className="hidden items-center gap-8 lg:flex"
+          >
             <a
               href="#weddings"
               className="text-[10px] uppercase tracking-[0.22em] text-white/75 transition hover:text-white"
@@ -294,39 +387,42 @@ export default function Enquire() {
 
             <a
               href="#enquiry"
-              className="group ml-3 flex items-center gap-2 border border-white/30 px-5 py-3 text-[10px] uppercase tracking-[0.22em] text-white transition duration-300 hover:bg-white hover:text-[#211e1b]"
+              className="group ml-3 inline-flex items-center gap-2 border border-white/30 px-5 py-3 text-[10px] uppercase tracking-[0.22em] text-white transition duration-300 hover:bg-white hover:text-[#211e1b]"
             >
               Enquire
 
               <ArrowUpRight
                 size={14}
                 strokeWidth={1.4}
+                aria-hidden="true"
                 className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
               />
             </a>
           </nav>
 
-          {/* MOBILE MENU BUTTON */}
+          {/* Mobile menu button */}
           <button
             type="button"
-            onClick={() => setMobileMenu(!mobileMenu)}
-            aria-label="Toggle navigation"
+            onClick={() => setMobileMenu((current) => !current)}
+            aria-label={mobileMenu ? "Close navigation" : "Open navigation"}
+            aria-expanded={mobileMenu}
             className="relative z-[60] flex h-11 w-11 items-center justify-center border border-white/30 text-white lg:hidden"
           >
             {mobileMenu ? (
-              <X size={20} strokeWidth={1.4} />
+              <X size={20} strokeWidth={1.4} aria-hidden="true" />
             ) : (
-              <Menu size={20} strokeWidth={1.4} />
+              <Menu size={20} strokeWidth={1.4} aria-hidden="true" />
             )}
           </button>
         </div>
 
-        {/* MOBILE NAVIGATION */}
+        {/* Mobile navigation */}
         <div
+          aria-hidden={!mobileMenu}
           className={`fixed inset-0 z-50 bg-[#211e1b] transition-all duration-500 lg:hidden ${
             mobileMenu
               ? "visible opacity-100"
-              : "invisible opacity-0"
+              : "pointer-events-none invisible opacity-0"
           }`}
         >
           <div className="flex h-full flex-col justify-center px-8">
@@ -338,46 +434,23 @@ export default function Enquire() {
               <div className="mt-4 h-px w-12 bg-[#cbbd9f]/50" />
             </div>
 
-            <nav className="space-y-6">
-              <a
-                href="#weddings"
-                onClick={closeMobileMenu}
-                className="block font-serif text-5xl text-white"
-              >
-                Weddings
-              </a>
-
-              <a
-                href="#events"
-                onClick={closeMobileMenu}
-                className="block font-serif text-5xl text-white"
-              >
-                Events
-              </a>
-
-              <a
-                href="#destinations"
-                onClick={closeMobileMenu}
-                className="block font-serif text-5xl text-white"
-              >
-                Destinations
-              </a>
-
-              <a
-                href="#about"
-                onClick={closeMobileMenu}
-                className="block font-serif text-5xl text-white"
-              >
-                About
-              </a>
-
-              <a
-                href="#faq"
-                onClick={closeMobileMenu}
-                className="block font-serif text-5xl text-white"
-              >
-                FAQ
-              </a>
+            <nav className="space-y-6" aria-label="Mobile navigation">
+              {[
+                ["Weddings", "#weddings"],
+                ["Events", "#events"],
+                ["Destinations", "#destinations"],
+                ["About", "#about"],
+                ["FAQ", "#faq"],
+              ].map(([label, href]) => (
+                <a
+                  key={label}
+                  href={href}
+                  onClick={closeMobileMenu}
+                  className="block font-serif text-5xl text-white transition-opacity hover:opacity-70"
+                >
+                  {label}
+                </a>
+              ))}
             </nav>
 
             <a
@@ -387,25 +460,35 @@ export default function Enquire() {
             >
               Begin an enquiry
 
-              <ArrowRight size={15} />
+              <ArrowRight size={15} strokeWidth={1.3} aria-hidden="true" />
             </a>
           </div>
         </div>
       </header>
 
-      {/* =====================================================
+      {/* =========================================================
           HERO
-      ====================================================== */}
+      ========================================================== */}
+
       <section
         id="top"
         className="relative flex min-h-[88vh] items-end overflow-hidden bg-[#211e1b] px-6 pb-20 pt-40 text-white md:min-h-screen md:px-10 md:pb-24 lg:px-16"
       >
         {/* Decorative circles */}
-        <div className="pointer-events-none absolute -right-[180px] -top-[180px] h-[550px] w-[550px] rounded-full border border-white/[0.08] md:h-[700px] md:w-[700px]" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-[180px] -top-[180px] h-[550px] w-[550px] rounded-full border border-white/[0.08] md:h-[700px] md:w-[700px]"
+        />
 
-        <div className="pointer-events-none absolute -right-[90px] -top-[90px] h-[400px] w-[400px] rounded-full border border-white/[0.07] md:h-[500px] md:w-[500px]" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-[90px] -top-[90px] h-[400px] w-[400px] rounded-full border border-white/[0.07] md:h-[500px] md:w-[500px]"
+        />
 
-        <div className="pointer-events-none absolute bottom-0 left-1/2 h-px w-[90%] -translate-x-1/2 bg-white/[0.08]" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-1/2 h-px w-[90%] -translate-x-1/2 bg-white/[0.08]"
+        />
 
         <div className="mx-auto w-full max-w-[1440px]">
           <div className="max-w-5xl">
@@ -420,9 +503,8 @@ export default function Enquire() {
             </h1>
 
             <p className="mt-9 max-w-xl text-sm leading-8 text-white/60 md:text-base">
-              Tell us about your plans and let us create
-              an extraordinary celebration that feels
-              entirely yours.
+              Tell us about your plans and let us create an extraordinary
+              celebration that feels entirely yours.
             </p>
           </div>
 
@@ -435,25 +517,25 @@ export default function Enquire() {
             <ArrowDown
               size={15}
               strokeWidth={1.3}
+              aria-hidden="true"
             />
           </a>
         </div>
       </section>
 
-      {/* =====================================================
+      {/* =========================================================
           CONTACT STRIP
-      ====================================================== */}
+      ========================================================== */}
+
       <section className="border-b border-[#ddd6ca] bg-[#f8f5ef] px-6 py-10 md:px-10 lg:px-16">
         <div className="mx-auto grid max-w-[1440px] gap-8 md:grid-cols-2">
           <a
             href="tel:+2348000000000"
             className="group flex items-center gap-5"
+            aria-label="Call Cadaora Events"
           >
             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-[#cfc7ba] transition duration-300 group-hover:bg-[#211e1b] group-hover:text-white">
-              <Phone
-                size={17}
-                strokeWidth={1.3}
-              />
+              <Phone size={17} strokeWidth={1.3} aria-hidden="true" />
             </div>
 
             <div>
@@ -461,21 +543,17 @@ export default function Enquire() {
                 Call us
               </p>
 
-              <p className="mt-1 text-sm">
-                +234 800 000 0000
-              </p>
+              <p className="mt-1 text-sm">+234 800 000 0000</p>
             </div>
           </a>
 
           <a
             href="mailto:hello@cadaoraevents.com"
             className="group flex items-center gap-5"
+            aria-label="Email Cadaora Events"
           >
             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-[#cfc7ba] transition duration-300 group-hover:bg-[#211e1b] group-hover:text-white">
-              <Mail
-                size={17}
-                strokeWidth={1.3}
-              />
+              <Mail size={17} strokeWidth={1.3} aria-hidden="true" />
             </div>
 
             <div>
@@ -483,23 +561,22 @@ export default function Enquire() {
                 Email us
               </p>
 
-              <p className="mt-1 text-sm">
-                hello@cadaoraevents.com
-              </p>
+              <p className="mt-1 text-sm">hello@cadaoraevents.com</p>
             </div>
           </a>
         </div>
       </section>
 
-      {/* =====================================================
-          ENQUIRY SECTION
-      ====================================================== */}
+      {/* =========================================================
+          ENQUIRY FORM
+      ========================================================== */}
+
       <section
         id="enquiry"
-        className="px-6 py-20 md:px-10 md:py-28 lg:px-16 lg:py-36"
+        className="scroll-mt-10 px-6 py-20 md:px-10 md:py-28 lg:px-16 lg:py-36"
       >
         <div className="mx-auto grid max-w-[1440px] gap-16 lg:grid-cols-[0.7fr_1.3fr] lg:gap-24">
-          {/* LEFT CONTENT */}
+          {/* Left content */}
           <div className="lg:sticky lg:top-24 lg:self-start">
             <p className="text-[10px] uppercase tracking-[0.35em] text-[#9b8b72]">
               Enquire
@@ -514,29 +591,28 @@ export default function Enquire() {
             </h2>
 
             <p className="mt-9 max-w-md text-sm leading-8 text-[#70695f]">
-              Whether you're planning an intimate
-              celebration or a spectacular occasion,
-              we'd love to hear what you're imagining.
+              Whether you're planning an intimate celebration or a spectacular
+              occasion, we'd love to hear what you're imagining.
             </p>
 
             <div className="mt-10 h-px w-20 bg-[#9b8b72]" />
 
             <p className="mt-8 max-w-md text-xs leading-7 text-[#81796d]">
-              Please complete the form with as much
-              detail as possible. This helps our team
-              understand your event and begin creating a
-              truly bespoke experience.
+              Please complete the form with as much detail as possible. This
+              helps our team understand your event and begin creating a truly
+              bespoke experience.
             </p>
           </div>
 
-          {/* FORM */}
+          {/* Form */}
           <div>
             {!submitted ? (
               <form
                 onSubmit={handleSubmit}
                 className="space-y-10"
+                noValidate={false}
               >
-                {/* EVENT TYPE */}
+                {/* Event type */}
                 <div>
                   <label
                     htmlFor="eventType"
@@ -551,39 +627,19 @@ export default function Enquire() {
                     value={formData.eventType}
                     onChange={handleChange}
                     required
-                    className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm text-[#211e1b] transition focus:border-[#211e1b]"
+                    className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none transition focus:border-[#211e1b]"
                   >
-                    <option value="">
-                      Select event type
-                    </option>
+                    <option value="">Select event type</option>
 
-                    <option value="Wedding">
-                      Wedding
-                    </option>
-
-                    <option value="Milestone Celebration">
-                      Milestone Celebration
-                    </option>
-
-                    <option value="Private Party">
-                      Private Party
-                    </option>
-
-                    <option value="Corporate Event">
-                      Corporate Event
-                    </option>
-
-                    <option value="Destination Event">
-                      Destination Event
-                    </option>
-
-                    <option value="Other">
-                      Other
-                    </option>
+                    {eventTypes.map((eventType) => (
+                      <option key={eventType} value={eventType}>
+                        {eventType}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
-                {/* NAME + EMAIL */}
+                {/* Name + Email */}
                 <div className="grid gap-8 md:grid-cols-2">
                   <div>
                     <label
@@ -600,8 +656,9 @@ export default function Enquire() {
                       value={formData.name}
                       onChange={handleChange}
                       required
+                      autoComplete="name"
                       placeholder="Your name"
-                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
+                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
                     />
                   </div>
 
@@ -620,13 +677,14 @@ export default function Enquire() {
                       value={formData.email}
                       onChange={handleChange}
                       required
+                      autoComplete="email"
                       placeholder="you@example.com"
-                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
+                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
                     />
                   </div>
                 </div>
 
-                {/* PHONE + GUESTS */}
+                {/* Phone + Guests */}
                 <div className="grid gap-8 md:grid-cols-2">
                   <div>
                     <label
@@ -643,8 +701,10 @@ export default function Enquire() {
                       value={formData.phone}
                       onChange={handleChange}
                       required
+                      autoComplete="tel"
+                      inputMode="tel"
                       placeholder="+234..."
-                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
+                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
                     />
                   </div>
 
@@ -664,13 +724,14 @@ export default function Enquire() {
                       onChange={handleChange}
                       min="1"
                       required
+                      inputMode="numeric"
                       placeholder="Number of guests"
-                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
+                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
                     />
                   </div>
                 </div>
 
-                {/* YEAR + SEASON */}
+                {/* Year + Season */}
                 <div className="grid gap-8 md:grid-cols-2">
                   <div>
                     <label
@@ -685,31 +746,15 @@ export default function Enquire() {
                       name="year"
                       value={formData.year}
                       onChange={handleChange}
-                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm transition focus:border-[#211e1b]"
+                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none transition focus:border-[#211e1b]"
                     >
-                      <option value="">
-                        Select year
-                      </option>
+                      <option value="">Select year</option>
 
-                      <option value="2026">
-                        2026
-                      </option>
-
-                      <option value="2027">
-                        2027
-                      </option>
-
-                      <option value="2028">
-                        2028
-                      </option>
-
-                      <option value="2029">
-                        2029
-                      </option>
-
-                      <option value="2030">
-                        2030
-                      </option>
+                      {years.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -726,32 +771,20 @@ export default function Enquire() {
                       name="season"
                       value={formData.season}
                       onChange={handleChange}
-                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm transition focus:border-[#211e1b]"
+                      className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none transition focus:border-[#211e1b]"
                     >
-                      <option value="">
-                        Select season
-                      </option>
+                      <option value="">Select season</option>
 
-                      <option value="Spring">
-                        Spring
-                      </option>
-
-                      <option value="Summer">
-                        Summer
-                      </option>
-
-                      <option value="Autumn">
-                        Autumn
-                      </option>
-
-                      <option value="Winter">
-                        Winter
-                      </option>
+                      {seasons.map((season) => (
+                        <option key={season} value={season}>
+                          {season}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
 
-                {/* BUDGET */}
+                {/* Budget */}
                 <div>
                   <label
                     htmlFor="budget"
@@ -765,31 +798,19 @@ export default function Enquire() {
                     name="budget"
                     value={formData.budget}
                     onChange={handleChange}
-                    className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm transition focus:border-[#211e1b]"
+                    className="w-full border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm outline-none transition focus:border-[#211e1b]"
                   >
-                    <option value="">
-                      Select budget range
-                    </option>
+                    <option value="">Select budget range</option>
 
-                    <option value="₦5m - ₦10m">
-                      ₦5m - ₦10m
-                    </option>
-
-                    <option value="₦10m - ₦20m">
-                      ₦10m - ₦20m
-                    </option>
-
-                    <option value="₦20m - ₦50m">
-                      ₦20m - ₦50m
-                    </option>
-
-                    <option value="₦50m+">
-                      ₦50m+
-                    </option>
+                    {budgets.map((budget) => (
+                      <option key={budget} value={budget}>
+                        {budget}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
-                {/* VISION */}
+                {/* Vision */}
                 <div>
                   <label
                     htmlFor="vision"
@@ -803,66 +824,60 @@ export default function Enquire() {
                     name="vision"
                     value={formData.vision}
                     onChange={handleChange}
-                    rows="7"
+                    rows={7}
                     placeholder="Tell us about your plans, ideas, preferred location, style and anything else you'd like us to know..."
-                    className="w-full resize-none border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm leading-7 placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
+                    className="w-full resize-none border-b border-[#bbb3a7] bg-transparent px-0 py-4 text-sm leading-7 outline-none placeholder:text-[#aaa296] transition focus:border-[#211e1b]"
                   />
                 </div>
 
-                {/* SUBMIT */}
+                {/* Submit */}
                 <button
                   type="submit"
-                  className="group inline-flex items-center gap-7 bg-[#211e1b] px-8 py-5 text-[10px] uppercase tracking-[0.28em] text-white transition duration-300 hover:bg-[#403b35]"
+                  disabled={isSubmitting}
+                  className="group inline-flex items-center gap-7 bg-[#211e1b] px-8 py-5 text-[10px] uppercase tracking-[0.28em] text-white transition duration-300 hover:bg-[#403b35] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Submit enquiry
+                  {isSubmitting ? "Sending..." : "Submit enquiry"}
 
-                  <ArrowRight
-                    size={16}
-                    strokeWidth={1.3}
-                    className="transition-transform duration-300 group-hover:translate-x-2"
-                  />
+                  {!isSubmitting && (
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={1.3}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-2"
+                    />
+                  )}
                 </button>
               </form>
             ) : (
-              /* SUCCESS MESSAGE */
-              <div className="border border-[#d8d0c4] bg-white p-10 md:p-16">
+              /* Success message */
+              <div
+                role="status"
+                aria-live="polite"
+                className="border border-[#d8d0c4] bg-white p-10 md:p-16"
+              >
                 <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#9b8b72]">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-7 w-7"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.3"
-                  >
-                    <path
-                      d="M5 12.5l4 4L19 7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <Check
+                    size={28}
+                    strokeWidth={1.3}
+                    aria-hidden="true"
+                  />
                 </div>
 
                 <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-[#9b8b72]">
                   Enquiry received
                 </p>
 
-                <h3 className="mt-4 font-serif text-5xl">
-                  Thank you.
-                </h3>
+                <h3 className="mt-4 font-serif text-5xl">Thank you.</h3>
 
                 <p className="mt-6 max-w-lg text-sm leading-8 text-[#70695f]">
-                  Your enquiry has been received. A member
-                  of the Cadaora Events team will review your
-                  plans and be in touch shortly.
+                  Your enquiry has been received. A member of the Cadaora
+                  Events team will review your plans and be in touch shortly.
                 </p>
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setFormData(initialForm);
-                    setSubmitted(false);
-                  }}
-                  className="mt-9 border-b border-[#211e1b] pb-1 text-[10px] uppercase tracking-[0.25em]"
+                  onClick={resetForm}
+                  className="mt-9 border-b border-[#211e1b] pb-1 text-[10px] uppercase tracking-[0.25em] transition-opacity hover:opacity-60"
                 >
                   Submit another enquiry
                 </button>
@@ -872,15 +887,15 @@ export default function Enquire() {
         </div>
       </section>
 
-      {/* =====================================================
+      {/* =========================================================
           FAQ
-      ====================================================== */}
+      ========================================================== */}
+
       <section
         id="faq"
-        className="bg-[#eee9df] px-6 py-20 md:px-10 md:py-28 lg:px-16 lg:py-36"
+        className="scroll-mt-10 bg-[#eee9df] px-6 py-20 md:px-10 md:py-28 lg:px-16 lg:py-36"
       >
         <div className="mx-auto max-w-5xl">
-          {/* FAQ HEADER */}
           <div className="mb-16 text-center">
             <p className="text-[10px] uppercase tracking-[0.35em] text-[#9b8b72]">
               Frequently asked
@@ -891,16 +906,16 @@ export default function Enquire() {
             </h2>
 
             <p className="mx-auto mt-7 max-w-xl text-sm leading-8 text-[#70695f]">
-              Everything you need to know before
-              beginning your event planning journey with
-              Cadaora Events.
+              Everything you need to know before beginning your event planning
+              journey with Cadaora Events.
             </p>
           </div>
 
-          {/* FAQ ITEMS */}
           <div className="border-t border-[#cfc7ba]">
             {faqs.map((faq, index) => {
               const isOpen = openFaq === index;
+              const answerId = `faq-answer-${index}`;
+              const buttonId = `faq-button-${index}`;
 
               return (
                 <div
@@ -908,39 +923,35 @@ export default function Enquire() {
                   className="border-b border-[#cfc7ba]"
                 >
                   <button
+                    id={buttonId}
                     type="button"
-                    onClick={() =>
-                      setOpenFaq(
-                        isOpen ? null : index
-                      )
-                    }
-                    className="flex w-full items-center justify-between gap-8 py-7 text-left"
+                    onClick={() => toggleFaq(index)}
                     aria-expanded={isOpen}
+                    aria-controls={answerId}
+                    className="flex w-full items-center justify-between gap-8 py-7 text-left"
                   >
                     <span className="max-w-3xl font-serif text-xl leading-tight md:text-2xl">
                       {faq.question}
                     </span>
 
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center"
+                    >
                       {isOpen ? (
-                        <ChevronUp
-                          size={19}
-                          strokeWidth={1.2}
-                        />
+                        <ChevronUp size={19} strokeWidth={1.2} />
                       ) : (
-                        <ChevronDown
-                          size={19}
-                          strokeWidth={1.2}
-                        />
+                        <ChevronDown size={19} strokeWidth={1.2} />
                       )}
                     </span>
                   </button>
 
                   <div
+                    id={answerId}
+                    role="region"
+                    aria-labelledby={buttonId}
                     className={`grid transition-all duration-500 ease-in-out ${
-                      isOpen
-                        ? "grid-rows-[1fr]"
-                        : "grid-rows-[0fr]"
+                      isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                     }`}
                   >
                     <div className="overflow-hidden">
@@ -956,9 +967,10 @@ export default function Enquire() {
         </div>
       </section>
 
-      {/* =====================================================
+      {/* =========================================================
           OTHER ENQUIRIES
-      ====================================================== */}
+      ========================================================== */}
+
       <section className="bg-[#211e1b] px-6 py-20 text-white md:px-10 md:py-28 lg:px-16 lg:py-32">
         <div className="mx-auto max-w-[1440px]">
           <p className="text-[10px] uppercase tracking-[0.35em] text-[#b9aa8e]">
@@ -966,17 +978,15 @@ export default function Enquire() {
           </p>
 
           <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-10">
-            {/* PRESS */}
+            {/* Press */}
             <div>
               <div className="mb-7 h-px w-10 bg-[#b9aa8e]/60" />
 
-              <h3 className="font-serif text-3xl">
-                Press & Speaking
-              </h3>
+              <h3 className="font-serif text-3xl">Press & Speaking</h3>
 
               <p className="mt-5 max-w-xs text-sm leading-7 text-white/50">
-                For media enquiries, interviews,
-                features and speaking opportunities.
+                For media enquiries, interviews, features and speaking
+                opportunities.
               </p>
 
               <a
@@ -987,17 +997,15 @@ export default function Enquire() {
               </a>
             </div>
 
-            {/* PARTNERS */}
+            {/* Partners */}
             <div>
               <div className="mb-7 h-px w-10 bg-[#b9aa8e]/60" />
 
-              <h3 className="font-serif text-3xl">
-                Venues & Partners
-              </h3>
+              <h3 className="font-serif text-3xl">Venues & Partners</h3>
 
               <p className="mt-5 max-w-xs text-sm leading-7 text-white/50">
-                For venue owners, suppliers and event
-                partnership opportunities.
+                For venue owners, suppliers and event partnership
+                opportunities.
               </p>
 
               <a
@@ -1008,17 +1016,14 @@ export default function Enquire() {
               </a>
             </div>
 
-            {/* CAREERS */}
+            {/* Careers */}
             <div>
               <div className="mb-7 h-px w-10 bg-[#b9aa8e]/60" />
 
-              <h3 className="font-serif text-3xl">
-                Careers
-              </h3>
+              <h3 className="font-serif text-3xl">Careers</h3>
 
               <p className="mt-5 max-w-xs text-sm leading-7 text-white/50">
-                Interested in joining the Cadaora Events
-                team?
+                Interested in joining the Cadaora Events team?
               </p>
 
               <a
@@ -1032,12 +1037,13 @@ export default function Enquire() {
         </div>
       </section>
 
-      {/* =====================================================
+      {/* =========================================================
           FINAL CTA
-      ====================================================== */}
+      ========================================================== */}
+
       <section
         id="about"
-        className="bg-[#f8f5ef] px-6 py-24 text-center md:px-10 md:py-32 lg:px-16 lg:py-40"
+        className="scroll-mt-10 bg-[#f8f5ef] px-6 py-24 text-center md:px-10 md:py-32 lg:px-16 lg:py-40"
       >
         <div className="mx-auto max-w-4xl">
           <p className="text-[10px] uppercase tracking-[0.35em] text-[#9b8b72]">
@@ -1051,8 +1057,8 @@ export default function Enquire() {
           </h2>
 
           <p className="mx-auto mt-8 max-w-xl text-sm leading-8 text-[#70695f]">
-            Share your plans with us and let's begin
-            creating something extraordinary.
+            Share your plans with us and let's begin creating something
+            extraordinary.
           </p>
 
           <a
@@ -1064,17 +1070,19 @@ export default function Enquire() {
             <ArrowRight
               size={16}
               strokeWidth={1.3}
+              aria-hidden="true"
               className="transition-transform duration-300 group-hover:translate-x-2"
             />
           </a>
         </div>
       </section>
 
-      {/* =====================================================
+      {/* =========================================================
           FOOTER
-      ====================================================== */}
+      ========================================================== */}
+
       <footer className="bg-[#211e1b] text-[#f7f3eb]">
-        {/* FOOTER CTA */}
+        {/* Footer CTA */}
         <div className="border-b border-white/10 px-6 py-20 md:px-10 lg:px-16 lg:py-28">
           <div className="mx-auto max-w-[1440px]">
             <div className="flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
@@ -1099,6 +1107,7 @@ export default function Enquire() {
                 <ArrowUpRight
                   size={15}
                   strokeWidth={1.3}
+                  aria-hidden="true"
                   className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
                 />
               </a>
@@ -1106,26 +1115,24 @@ export default function Enquire() {
           </div>
         </div>
 
-        {/* FOOTER CONTENT */}
+        {/* Footer content */}
         <div className="px-6 py-16 md:px-10 lg:px-16">
           <div className="mx-auto grid max-w-[1440px] gap-14 md:grid-cols-2 lg:grid-cols-4">
-            {/* BRAND */}
+            {/* Brand */}
             <div>
-              <div className="font-serif text-4xl">
-                Cadaora
-              </div>
+              <div className="font-serif text-4xl">Cadaora</div>
 
               <div className="mt-1 text-[7px] uppercase tracking-[0.55em] text-[#b9aa8e]">
                 Events
               </div>
 
               <p className="mt-7 max-w-xs text-sm leading-7 text-white/45">
-                Bespoke celebrations, beautifully imagined
-                and thoughtfully executed.
+                Bespoke celebrations, beautifully imagined and thoughtfully
+                executed.
               </p>
             </div>
 
-            {/* EXPLORE */}
+            {/* Explore */}
             <div>
               <h3 className="text-[9px] uppercase tracking-[0.3em] text-[#b9aa8e]">
                 Explore
@@ -1162,7 +1169,7 @@ export default function Enquire() {
               </div>
             </div>
 
-            {/* CONTACT */}
+            {/* Contact */}
             <div>
               <h3 className="text-[9px] uppercase tracking-[0.3em] text-[#b9aa8e]">
                 Contact
@@ -1185,45 +1192,47 @@ export default function Enquire() {
               </div>
             </div>
 
-            {/* SOCIAL */}
+            {/* Social */}
             <div>
               <h3 className="text-[9px] uppercase tracking-[0.3em] text-[#b9aa8e]">
                 Follow us
               </h3>
 
-              <div className="mt-7 flex gap-3">
+              {/* <div className="mt-7 flex gap-3">
                 <a
                   href="#"
-                  aria-label="Instagram"
+                  aria-label="Cadaora Events on Instagram"
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 transition hover:bg-white hover:text-[#211e1b]"
                 >
                   <Instagram
                     size={16}
                     strokeWidth={1.4}
+                    aria-hidden="true"
                   />
                 </a>
 
                 <a
                   href="#"
-                  aria-label="Facebook"
+                  aria-label="Cadaora Events on Facebook"
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 transition hover:bg-white hover:text-[#211e1b]"
                 >
                   <Facebook
                     size={16}
                     strokeWidth={1.4}
+                    aria-hidden="true"
                   />
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
 
-        {/* COPYRIGHT */}
+        {/* Copyright */}
         <div className="border-t border-white/10 px-6 py-6 md:px-10 lg:px-16">
           <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-4 text-[9px] uppercase tracking-[0.16em] text-white/30 md:flex-row">
             <p>
-              © {new Date().getFullYear()} Cadaora Events.
-              All rights reserved.
+              © {new Date().getFullYear()} Cadaora Events. All rights
+              reserved.
             </p>
 
             <div className="flex gap-6">
