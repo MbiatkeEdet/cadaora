@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  /* Shared champagne and ivory base */
+  --color-ink: #ffffff;
+  --color-ink-soft: #fbf8f2;
+  --color-ink-line: #e4d8c7;
+  --color-ivory: #2c2721;
+  --color-parchment: #f3e8d5;
+
+  /* Cadora Events — warm champagne + wine */
+  --color-gold: #b58a4a;
+  --color-gold-soft: #9b7138;
+  --color-wine: #7a2e3a;
+  --color-wine-soft: #a4505c;
+
+  /* Venue Gypsy — jade + sand */
+  --color-jade: #235449;
+  --color-jade-soft: #3d7667;
+  --color-sand: #927b5d;
+  --color-sand-soft: #80694c;
+
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-ivory);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* utility: letter-spaced small caps labels used across both brands */
+.eyebrow {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(to right, transparent, currentColor, transparent);
+  opacity: 0.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
