@@ -87,6 +87,8 @@ function GypsyFooter() {
         </div>
         <div className="hairline mt-12 text-ivory/40" />
         <p className="mt-6 text-xs text-ivory/35">Venue Gypsy — a house of Cadora &amp; Gypsy Collective.</p>
+        <p className="mt-2 text-xs text-ivory/35">site developed by lemtech hub nig ltd</p>
+        <p className="mt-2 text-xs text-ivory/35">08036265605</p>
       </div>
     </footer>
   )

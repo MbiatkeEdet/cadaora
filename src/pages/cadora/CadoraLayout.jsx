@@ -16,7 +16,7 @@ export default function CadoraLayout() {
   return (
     <div className="min-h-screen bg-ink text-ivory">
       <button
-        className={`fixed right-6 top-6 z-[60] p-2 transition-colors ${open ? 'text-ink hover:text-wine' : 'text-gold-soft hover:text-gold'}`}
+        className={`fixed right-6 top-6 z-[60] p-4 transition-colors ${open ? 'text-ink hover:text-wine' : 'text-gold-soft hover:text-gold'}`}
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={open}
@@ -106,6 +106,9 @@ function CadoraFooter() {
           </div>
         </div>
         <div className="hairline mt-12 text-ivory/40" />
+        <p className="mt-6 text-xs text-ivory/35">site developed by lemtech hub nig ltd</p>
+        <p className="mt-2 text-xs text-ivory/35">08036265605</p>
+
       </div>
     </footer>
   )
