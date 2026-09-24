@@ -7,8 +7,8 @@ export default function Home() {
       <section>
         <div className="relative h-[62vh] min-h-[420px] w-full overflow-hidden">
         <img
-          src="/media/gallery/gold-hall.jpg"
-          alt="A candlelit reception hall with gold chiavari chairs and rose centrepieces"
+          src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"
+          alt="A couple bathed in golden-hour sunlight, holding a bouquet"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <p className="eyebrow absolute inset-x-0 bottom-8 z-10 px-6 text-center text-gold-soft">

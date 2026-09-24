@@ -15,7 +15,7 @@ export default function Weddings() {
         eyebrow="Weddings"
         title="A day built around you, not a template"
         subtitle="Full planning, partial planning, or design-only — Cadora scales to how much of the process you want to hold."
-        image="/media/gallery/candelabra.jpg"
+        image="/media/gallery/bride-card.jpg"
       />
 
       <section className="mx-auto max-w-5xl px-6 py-24">
