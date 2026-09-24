@@ -1,5 +1,4 @@
 import { Link, useParams, Navigate } from 'react-router-dom'
-import ContourArt from '../../components/ContourArt.jsx'
 import { destinations, getDestination } from '../../data/destinations.js'
 
 export default function DestinationDetail() {
@@ -13,8 +12,12 @@ export default function DestinationDetail() {
   return (
     <div>
       <section className="relative flex h-[70vh] min-h-[480px] w-full flex-col items-center justify-center overflow-hidden px-6 text-center">
-        <ContourArt seed={destination.seed} lines={11} color="#4c7d6e" className="absolute inset-0 h-full w-full opacity-70" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ivory via-ivory/30 to-ivory/60" />
+        <img
+          src={destination.image}
+          alt={destination.name}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/30" />
         <div className="relative z-10">
           <p className="eyebrow text-sand-soft">{destination.coords}</p>
           <h1 className="mt-4 font-display text-5xl italic text-ivory sm:text-6xl">{destination.name}</h1>
@@ -67,8 +70,13 @@ export default function DestinationDetail() {
               to={`/gypsy/destinations/${d.slug}`}
               className="group relative flex h-56 flex-col justify-end overflow-hidden border border-ink-line p-6"
             >
-              <ContourArt seed={d.seed} color="#4c7d6e" className="absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-ivory via-ivory/50 to-transparent" />
+              <img
+                src={d.image}
+                alt={d.name}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
               <div className="relative z-10">
                 <p className="eyebrow text-sand-soft">{d.country}</p>
                 <h3 className="mt-1 font-display text-xl italic text-ivory">{d.name}</h3>

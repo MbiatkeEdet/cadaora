@@ -1,3 +1,5 @@
+// Image URLs point at fixed Unsplash photo IDs (images.unsplash.com/photo-<id>) —
+// static assets, not the deprecated source.unsplash.com randomizer.
 export const destinations = [
   {
     slug: 'amalfi-coast',
@@ -11,6 +13,7 @@ export const destinations = [
       'Limestone villas cut into the cliffs, terraces stacked like amphitheatres above the Tyrrhenian Sea. Ceremonies are staged at the edge of the rock, dinners beneath centuries-old pergolas strung with citrus and candlelight.',
     experience: 'Sunset vow renewal on a private cliffside terrace, followed by a torch-lit descent to a cove dinner.',
     seed: 3,
+    image: 'https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&w=1600&q=80',
   },
   {
     slug: 'marrakech',
@@ -24,6 +27,7 @@ export const destinations = [
       'A restored 19th-century riad opens onto orange-tree courtyards and rooftop terraces facing the Atlas Mountains. Zellige tilework and hand-loomed textiles frame every gathering, day into lantern-lit night.',
     experience: 'A caravan procession by camel and drum into a Agafay Desert reception beneath a constellation of lanterns.',
     seed: 11,
+    image: 'https://images.unsplash.com/photo-1553603227-2358aabe821e?auto=format&fit=crop&w=1600&q=80',
   },
   {
     slug: 'lake-como',
@@ -37,6 +41,7 @@ export const destinations = [
       'A 17th-century lakefront villa with formal gardens descending to a private jetty. Guests arrive by wooden launch, dinners are set beneath cypress allées with the water lit gold at dusk.',
     experience: 'Guest arrival by classic Riva launch, fireworks reflected across the lake to close the evening.',
     seed: 21,
+    image: 'https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1600&q=80',
   },
   {
     slug: 'bali-uluwatu',
@@ -50,6 +55,7 @@ export const destinations = [
       'A glass-edged clifftop pavilion sits sixty metres above the surf. Traditional Balinese blessing ceremonies open the day; the reception unfolds as the horizon turns copper and the waves take over the soundtrack.',
     experience: 'A traditional Melukat water-blessing at dawn, reception staged at the cliff edge for sunset.',
     seed: 34,
+    image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1600&q=80',
   },
   {
     slug: 'scottish-highlands',
@@ -63,6 +69,7 @@ export const destinations = [
       'A restored keep with its own loch, glen, and stone-walled walled garden. Bagpipers lead the procession across the lawn; the great hall is dressed by firelight for a ceilidh that runs past midnight.',
     experience: 'A piper-led procession along the loch shore into a candlelit great hall ceilidh.',
     seed: 42,
+    image: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1600&q=80',
   },
   {
     slug: 'santorini',
@@ -76,6 +83,7 @@ export const destinations = [
       'A caldera-edge estate with infinity terraces facing the volcano. Ceremonies are set against the drop to the sea, and the famous Santorini sunset does most of the decorating.',
     experience: 'Caldera-edge ceremony timed to the sunset, followed by a private yacht dinner cruise.',
     seed: 55,
+    image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1600&q=80',
   },
   {
     slug: 'french-riviera',
@@ -89,6 +97,7 @@ export const destinations = [
       'A Belle-Époque villa estate with terraced gardens running to the sea wall. Old-world glamour, jazz on the lawn, and a coastline that has hosted a century of grand celebrations.',
     experience: 'A garden ceremony beneath century-old pines, followed by a live jazz quartet on the terrace.',
     seed: 67,
+    image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1600&q=80',
   },
   {
     slug: 'rajasthan',
@@ -102,6 +111,7 @@ export const destinations = [
       'A maharaja-era palace with courtyards of carved marble and a lake that doubles every archway. Elephant processions, folk drummers, and a fireworks display over the water close the celebration.',
     experience: 'A royal baraat procession with drummers and dancers, closing in a lakeside fireworks display.',
     seed: 78,
+    image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=80',
   },
 ]
 
