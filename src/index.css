@@ -1,27 +1,53 @@
 @import "tailwindcss";
 
+/* Candara ships with Windows; use it where installed, fall back to Nunito Sans elsewhere. */
+@font-face {
+  font-family: "Candara";
+  font-weight: 700;
+  src: local("Candara Bold"), local("Candara-Bold");
+}
+@font-face {
+  font-family: "Candara";
+  font-weight: 400;
+  src: local("Candara");
+}
+
 @theme {
-  /* Shared champagne and ivory base */
-  --color-ink: #ffffff;
-  --color-ink-soft: #fbf8f2;
-  --color-ink-line: #e4d8c7;
-  --color-ivory: #2c2721;
-  --color-parchment: #f3e8d5;
+  /* ---- Cadaora Exquisite Events (Studio Areca identity) ---- */
+  --color-pearl: #ffffff;
+  --color-pearl-soft: #f6f9f8;
+  --color-pearl-line: #e3ebe9;
+  --color-midnight: #000000;
+  --color-aqua: #51aaa1;
+  --color-aqua-deep: #3f8d85;
+  --color-aqua-tint: #e6f4f2;
+  --color-moss: #2f5427;
+  --color-moss-tint: #e9efe6;
+  --color-rose: #fbc3e1;
+  --color-rose-tint: #fdeaf4;
+  --color-azure: #a9c6e8;
+  --color-azure-tint: #eaf1f9;
+  --color-sol: #fcc65c;
+  --color-sol-tint: #fff3d6;
 
-  /* Cadora Events — warm champagne + wine */
-  --color-gold: #b58a4a;
-  --color-gold-soft: #9b7138;
-  --color-wine: #7a2e3a;
-  --color-wine-soft: #a4505c;
+  /* ---- The Venue Gypsy ---- */
+  --color-linen: #f9eedd;
+  --color-linen-deep: #f1e2c9;
+  --color-linen-line: #e6d6bc;
+  --color-coffee: #5a3e29;
+  --color-coffee-soft: #7b5c45;
+  --color-deep-blue: #088dac;
+  --color-deep-blue-tint: #e0f1f5;
+  --color-sun-orange: #f28c40;
+  --color-sun-orange-tint: #fde7d6;
 
-  /* Venue Gypsy — jade + sand */
-  --color-jade: #235449;
-  --color-jade-soft: #3d7667;
-  --color-sand: #927b5d;
-  --color-sand-soft: #80694c;
+  /* ---- Type ---- */
+  --font-cad-display: "Candara", "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-cad-body: "Axiforma", "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-gyp-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-gyp-body: "Outfit", ui-sans-serif, system-ui, sans-serif;
 
-  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --ease-brand: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 html {
@@ -29,37 +55,199 @@ html {
 }
 
 body {
-  background-color: var(--color-ink);
-  color: var(--color-ivory);
-  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background-color: var(--color-pearl);
+  color: var(--color-midnight);
+  font-family: var(--font-cad-body);
+}
+
+/* Per-brand scopes. Shared components read these variables. */
+.brand-cadaora {
+  --font-display: var(--font-cad-display);
+  --font-body: var(--font-cad-body);
+  --brand-bg: var(--color-pearl);
+  --brand-bg-soft: var(--color-pearl-soft);
+  --brand-line: var(--color-pearl-line);
+  --brand-text: var(--color-midnight);
+  --brand-primary: var(--color-aqua);
+  --brand-primary-deep: var(--color-aqua-deep);
+  --brand-secondary: var(--color-moss);
+  --brand-accent: var(--color-sol);
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--font-body);
+}
+
+.brand-gypsy {
+  --font-display: var(--font-gyp-display);
+  --font-body: var(--font-gyp-body);
+  --brand-bg: var(--color-linen);
+  --brand-bg-soft: var(--color-linen-deep);
+  --brand-line: var(--color-linen-line);
+  --brand-text: var(--color-coffee);
+  --brand-primary: var(--color-deep-blue);
+  --brand-primary-deep: #06718a;
+  --brand-secondary: var(--color-coffee);
+  --brand-accent: var(--color-sun-orange);
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--font-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+.brand-cadaora .font-display {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.brand-gypsy .font-display {
+  font-weight: 300;
+  font-variation-settings: "opsz" 144, "SOFT" 60;
+  letter-spacing: -0.015em;
 }
 
 ::selection {
-  background: var(--color-gold);
-  color: var(--color-ink);
+  background: var(--brand-primary, var(--color-aqua));
+  color: #fff;
 }
 
-/* utility: letter-spaced small caps labels used across both brands */
+/* Letter-spaced small labels used across both brands */
 .eyebrow {
   font-family: var(--font-body);
   text-transform: uppercase;
-  letter-spacing: 0.28em;
-  font-weight: 600;
-  font-size: 0.7rem;
+  letter-spacing: 0.26em;
+  font-weight: 500;
+  font-size: 0.68rem;
 }
 
 .hairline {
   height: 1px;
   background: linear-gradient(to right, transparent, currentColor, transparent);
-  opacity: 0.35;
+  opacity: 0.3;
+}
+
+/* Underline-style form fields (shared) */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--brand-line);
+  padding: 0.9rem 0;
+  font-size: 0.925rem;
+  color: var(--brand-text);
+  outline: none;
+  border-radius: 0;
+  transition: border-color 0.3s;
+}
+.field::placeholder {
+  color: color-mix(in srgb, var(--brand-text) 35%, transparent);
+}
+.field:focus {
+  border-bottom-color: var(--brand-primary);
+}
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='1.5'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  padding-right: 1.5rem;
+}
+
+/* Scroll reveal — restrained, once */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Emblem draw-on */
+/* Intro: the real emblem's blades fan open in sweep order, then the wordmark wipes in */
+@keyframes blade-in {
+  from {
+    opacity: 0;
+    transform: rotate(-28deg) scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes wordmark-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.emblem-fan path {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: var(--fan-origin, 50% 50%);
+  animation: blade-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.wordmark-wipe {
+  clip-path: inset(0 100% 0 0);
+  animation: wordmark-wipe 0.75s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.wordmark-sub {
+  opacity: 0;
+  animation: fade-in 0.6s ease-out forwards;
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise-in {
+  opacity: 0;
+  animation: rise-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Lenis smooth scrolling (Cadaora) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }
