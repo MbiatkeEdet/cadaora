@@ -1,0 +1,11 @@
+import { Link } from 'react-router-dom'
+import { ArrowUpRight } from 'lucide-react'
+import { PageHero, SectionIntro } from '../../components/Shared'
+import { journalStories, photo } from '../../data/contents'
+
+export default function Journal(){return <main><PageHero eyebrow="Stories from the places we discover" title={<>A journal of<br/><em>curiosity and place.</em></>} text="Field notes, venue stories, destination guides and observations from the road — sharing the places, details and ideas that make us curious." image="photo-1497250681960-ef046c08a56e"/>
+  <section className="container-wide py-20 md:py-28"><SectionIntro eyebrow="The editorial collection" title="Discovery becomes a story." text="Every story should offer more than attractive imagery. It should help you understand why a place matters, what it makes possible and what is useful to know before exploring it further."/>
+    <div className="mt-16 space-y-16">{journalStories.map((story,i)=><article key={story.title} className={`grid items-center gap-8 md:grid-cols-2 md:gap-16 ${i%2?'':' '}`}><div className={`image-reveal aspect-[5/4] ${i%2?'md:order-2':''}`}><img src={photo(story.image)} alt="" className="h-full w-full object-cover"/></div><div className="max-w-lg"><p className="eyebrow text-olive">{story.category}</p><h2 className="display-title mt-5 text-4xl md:text-5xl">{story.title}</h2><p className="mt-6 text-sm leading-8 text-muted">{story.excerpt}</p><p className="mt-4 text-xs italic text-muted">{story.read}</p><span className="mt-8 inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-olive">Editorial feature <ArrowUpRight size={14}/></span></div></article>)}</div>
+  </section>
+  <section className="bg-[#e9e7df] py-20"><div className="container-wide flex flex-col justify-between gap-8 md:flex-row md:items-end"><div><p className="eyebrow text-olive">From the road</p><h2 className="display-title mt-5 max-w-2xl text-5xl">The best discoveries invite a closer look.</h2></div><p className="max-w-md text-sm leading-7 text-muted">The Journal will grow with new venue features, destination guides, field notes, event possibilities and travel and hospitality discoveries.</p></div></section>
+</main>}

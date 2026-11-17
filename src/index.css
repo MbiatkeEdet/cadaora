@@ -20,8 +20,10 @@
   --color-sand: #927b5d;
   --color-sand-soft: #80694c;
 
-  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Candara, "Trebuchet MS", sans-serif;
+  --font-serif: Candara, "Trebuchet MS", sans-serif;
+  --font-display: Candara, "Trebuchet MS", sans-serif;
+  --font-body: Candara, "Trebuchet MS", sans-serif;
 }
 
 html {
@@ -32,7 +34,12 @@ body {
   background-color: var(--color-ink);
   color: var(--color-ivory);
   font-family: var(--font-body);
+  font-weight: 700;
   -webkit-font-smoothing: antialiased;
+}
+
+option {
+  font-weight: inherit;
 }
 
 ::selection {
@@ -45,7 +52,7 @@ body {
   font-family: var(--font-body);
   text-transform: uppercase;
   letter-spacing: 0.28em;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.7rem;
 }
 

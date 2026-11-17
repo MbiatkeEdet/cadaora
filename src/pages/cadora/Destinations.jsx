@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import PageHero from '../../components/PageHero.jsx'
 import { destinations } from '../../data/destinations.js'
+import Footer from '../../components/Footer.jsx'
 
 export default function Destinations() {
   const featured = destinations.slice(0, 3)
@@ -17,10 +18,10 @@ export default function Destinations() {
       <section className="mx-auto max-w-5xl px-6 py-24">
         <div className="grid gap-12 sm:grid-cols-2">
           <div>
-            <p className="eyebrow text-gold-soft">How it works</p>
-            <h2 className="mt-4 font-display text-3xl italic text-ivory">One team, wherever you land</h2>
+            <p className="eyebrow text-6xl font-candara font-bold">How it works</p>
+            <h2 className="mt-4 text-3xl font-candara font-bold text-ivory">One team, wherever you land</h2>
           </div>
-          <p className="text-md leading-relaxed text-ivory/70">
+          <p className="text-2xl font-candara leading-relaxed text-ivory/70">
             Destination events fail in the gaps — a florist who's never met the venue, a timeline built in the
             wrong timezone. Cadora sends its own team ahead: scouting the site, briefing local craftspeople, and
             running the same production standard you'd get at home, wherever "home" isn't.
@@ -80,6 +81,7 @@ export default function Destinations() {
           Enquire about a destination event
         </Link>
       </section>
+      <Footer />
     </div>
   )
 }

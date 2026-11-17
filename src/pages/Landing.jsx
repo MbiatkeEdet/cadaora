@@ -97,39 +97,40 @@
 //   )
 // }
 
-
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Landing() {
-  const [hover, setHover] = useState(null)
-  const [introVisible, setIntroVisible] = useState(true)
-  const [introLeaving, setIntroLeaving] = useState(false)
+  const [hover, setHover] = useState(null);
+  const [introVisible, setIntroVisible] = useState(true);
+  const [introLeaving, setIntroLeaving] = useState(false);
 
   useEffect(() => {
-    const leaveTimer = window.setTimeout(() => setIntroLeaving(true), 2200)
-    const removeTimer = window.setTimeout(() => setIntroVisible(false), 3400)
+    const leaveTimer = window.setTimeout(() => setIntroLeaving(true), 2200);
+    const removeTimer = window.setTimeout(() => setIntroVisible(false), 3400);
 
     return () => {
-      window.clearTimeout(leaveTimer)
-      window.clearTimeout(removeTimer)
-    }
-  }, [])
+      window.clearTimeout(leaveTimer);
+      window.clearTimeout(removeTimer);
+    };
+  }, []);
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-ink text-ivory">
       {introVisible && (
         <div
           className={`fixed inset-0 z-[100] flex items-center justify-center bg-parchment px-8 transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
-            introLeaving ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'
+            introLeaving
+              ? "-translate-y-full opacity-0"
+              : "translate-y-0 opacity-100"
           }`}
           aria-hidden="true"
         >
           <img
-            src="/media/gallery/cadaora%20logo.jpg"
+            src="/media/gallery/cadaora-image.jpg"
             alt="Cadora Events"
-            className={`w-full max-w-sm object-contain mix-blend-multiply transition-all duration-[1200ms] ease-out ${
-              introLeaving ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+            className={`w-full max-w-sm object-contain invert mix-blend-multiply transition-all duration-[1200ms] ease-out ${
+              introLeaving ? "scale-95 opacity-0" : "scale-100 opacity-100"
             }`}
           />
         </div>
@@ -158,13 +159,8 @@ export default function Landing() {
         className="pointer-events-none fixed inset-y-0 left-0 w-1/2 transition-opacity duration-700"
         style={{
           background:
-            'radial-gradient(circle at 30% 50%, rgba(201,162,78,0.35), transparent 60%)',
-          opacity:
-            hover === 'cadora'
-              ? 1
-              : hover === 'gypsy'
-                ? 0
-                : 0.35,
+            "radial-gradient(circle at 30% 50%, rgb(8,141,172), transparent 60%)",
+          opacity: hover === "cadora" ? 1 : hover === "gypsy" ? 0 : 0.35,
         }}
       />
 
@@ -173,21 +169,27 @@ export default function Landing() {
         className="pointer-events-none fixed inset-y-0 right-0 w-1/2 transition-opacity duration-700"
         style={{
           background:
-            'radial-gradient(circle at 70% 50%, rgba(76,125,110,0.4), transparent 60%)',
-          opacity:
-            hover === 'gypsy'
-              ? 1
-              : hover === 'cadora'
-                ? 0
-                : 0.35,
+            "radial-gradient(circle at 70% 50%, rgba(76,125,110,0.4), transparent 60%)",
+          opacity: hover === "gypsy" ? 1 : hover === "cadora" ? 0 : 0.35,
         }}
       />
 
       {/* Main content */}
       <div className="relative z-10 flex min-h-screen flex-col">
         {/* Top mark */}
-        <header className="flex items-center justify-center px-6 pt-8 sm:pt-10">
-          <p className="eyebrow text-center text-xs text-ivory/70 sm:text-sm">
+        <header className="grid grid-cols-[auto_1fr] items-center gap-4 px-6 pt-8 sm:grid-cols-[1fr_auto_1fr] sm:pt-10">
+          <Link
+            to="/cadora"
+            aria-label="Cadaora Events home"
+            className="inline-flex shrink-0 items-center justify-self-start rounded-sm bg-white p-2"
+          >
+            <img
+              src="/media/gallery/cadora-white.jpg"
+              alt="Cadaora Events"
+              className="w-24 object-contain invert mix-blend-multiply sm:w-32"
+            />
+          </Link>
+          <p className="eyebrow text-xs text-ivory/70 sm:col-start-2 sm:text-center sm:text-sm">
             Two houses · One standard of craft
           </p>
         </header>
@@ -195,15 +197,15 @@ export default function Landing() {
         {/* Hero */}
         <main className="flex flex-1 flex-col justify-center px-6 py-14 text-center sm:py-16">
           <div className="mx-auto max-w-7xl">
-            <h1 className="font-light text-4xl text-uppercase leading-[0.98] tracking-[-0.04em] text-ivory sm:text-6xl md:text-7xl lg:text-7xl text-uppercase">
+            <h1 className="font-bold text-4xl text-uppercase leading-[0.98] tracking-[-0.04em] text-ivory sm:text-6xl md:text-7xl lg:text-7xl text-uppercase">
               Where the occasion
               <br className="hidden sm:block" />
               meets its setting
             </h1>
 
             <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ivory/70 sm:text-lg">
-              Choose your door: bespoke celebrations, or the exquisite
-              corners of the world built to hold them.
+              Choose your door: bespoke celebrations, or the exquisite corners
+              of the world built to hold them.
             </p>
           </div>
         </main>
@@ -214,46 +216,46 @@ export default function Landing() {
             {/* Cadora */}
             <Link
               to="/cadora"
-              onMouseEnter={() => setHover('cadora')}
+              onMouseEnter={() => setHover("cadora")}
               onMouseLeave={() => setHover(null)}
-              onTouchStart={() => setHover('cadora')}
+              onTouchStart={() => setHover("cadora")}
               className="group relative flex min-h-[220px] flex-col items-center justify-center gap-4 border border-ivory/15 p-8 backdrop-blur-[2px] transition-all duration-500 hover:border-gold/60 hover:bg-ink/10 sm:min-h-0 sm:border-r-0"
               aria-label="Enter Cadora Events"
             >
-              <span className="inline-block -rotate-1 bg-ivory px-5 py-2 font-display text-lg italic text-ink shadow-lg transition-transform duration-500 group-hover:rotate-0">
-                Cadora Events
+              <span className="inline-block -rotate-1 bg-ivory rounded-full  px-5 py-2 font-candara text-lg italic text-ink shadow-lg transition-transform duration-500 group-hover:rotate-0">
+                Cadaora Events
               </span>
 
               <p className="eyebrow text-gold-soft">
                 Weddings · Parties · Destinations
               </p>
 
-              <span className="mt-2 flex items-center gap-2 text-xs text-ivory/60 transition-all duration-500 group-hover:gap-3 group-hover:text-ivory">
+              <span className="mt-2 inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-2 text-xs text-ivory/60 transition-all duration-500 group-hover:border-ivory group-hover:text-ivory">
                 Enter the house
-                <ArrowRight />
+                <ArrowRight size={14} />
               </span>
             </Link>
 
             {/* Venue Gypsy */}
             <Link
               to="/gypsy"
-              onMouseEnter={() => setHover('gypsy')}
+              onMouseEnter={() => setHover("gypsy")}
               onMouseLeave={() => setHover(null)}
-              onTouchStart={() => setHover('gypsy')}
+              onTouchStart={() => setHover("gypsy")}
               className="group relative flex min-h-[220px] flex-col items-center justify-center gap-4 border border-ivory/15 p-8 backdrop-blur-[2px] transition-all duration-500 hover:border-jade-soft/70 hover:bg-ink/10 sm:min-h-0 sm:border-l-0"
               aria-label="Explore Venue Gypsy"
             >
-              <span className="inline-block rotate-1 bg-ivory px-5 py-2 font-display text-lg italic text-ink shadow-lg transition-transform duration-500 group-hover:rotate-0">
+              <span className="inline-block rotate-1 bg-ivory px-5 py-2 font-candara rounded-full text-lg italic text-ink shadow-lg transition-transform duration-500 group-hover:rotate-0">
                 Venue Gypsy
               </span>
 
-              <p className="eyebrow text-sand-soft">
+              <p className="eyebrow text-sand-soft font-candara">
                 An Atlas of Exquisite Destinations
               </p>
 
-              <span className="mt-2 flex items-center gap-2 text-xs text-ivory/60 transition-all duration-500 group-hover:gap-3 group-hover:text-ivory">
-                Explore the atlas
-                <ArrowRight />
+              <span className="mt-2 inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-2 text-xs text-ivory/60 transition-all duration-500 group-hover:border-ivory group-hover:text-ivory">
+                Enter the house
+                <ArrowRight size={14} />
               </span>
             </Link>
 
@@ -263,7 +265,7 @@ export default function Landing() {
         </section>
       </div>
     </div>
-  )
+  );
 }
 
 function ArrowRight() {
@@ -283,5 +285,5 @@ function ArrowRight() {
         strokeLinejoin="round"
       />
     </svg>
-  )
+  );
 }
