@@ -130,7 +130,7 @@ export default function Home() {
               to="/cadaora/services"
               className="group relative flex h-[72vh] min-h-[420px] items-end overflow-hidden rounded-[1.5rem] bg-midnight text-white sm:h-[78vh]"
             >
-              <img src={s.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.6s] group-hover:scale-[1.03]" />
+              <img src={s.image} alt="" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.6s] group-hover:scale-[1.03]" />
               <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/20 to-black/10" />
               <div className="relative z-10 w-full p-7 sm:p-14">
                 <p className="eyebrow text-white/70">0{i + 1}</p>

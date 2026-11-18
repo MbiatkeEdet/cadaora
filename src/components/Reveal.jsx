@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react'
 
-/** Fades a block in once when it enters the viewport. */
+/**
+ * Fades a block in when it enters the viewport. On the brand pages it also fades
+ * back out when you scroll up past it (leaves through the bottom), so it plays
+ * again on the next pass down; elsewhere it reveals once.
+ */
 export default function Reveal({ as: Tag = 'div', className = '', delay = 0, children, ...rest }) {
   const ref = useRef(null)
 
@@ -11,12 +15,16 @@ export default function Reveal({ as: Tag = 'div', className = '', delay = 0, chi
       el.classList.add('is-in')
       return undefined
     }
+    const repeat = !!el.closest('.brand-cadaora, .brand-gypsy')
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             el.classList.add('is-in')
-            io.disconnect()
+            if (!repeat) io.disconnect()
+          } else if (repeat && entry.boundingClientRect.top > 0) {
+            // scrolled back up past it: hide so it reveals again next time
+            el.classList.remove('is-in')
           }
         })
       },

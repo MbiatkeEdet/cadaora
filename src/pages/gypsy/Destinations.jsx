@@ -12,6 +12,7 @@ export default function Destinations() {
         description="Some destinations have a way of shaping an occasion before the first guest arrives. Explore places worth discovering and the venues that make them compelling."
       />
       <PageHero
+        motion
         eyebrow="Destinations"
         title="The place is part of the experience."
         subtitle="Some destinations have a way of shaping an occasion before the first guest arrives. The landscape, culture, architecture, pace and surrounding experiences all contribute to the story."

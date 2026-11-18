@@ -4,6 +4,7 @@ import Seo from '../../components/Seo.jsx'
 import PageHero from '../../components/PageHero.jsx'
 import Reveal from '../../components/Reveal.jsx'
 import Button, { Arrow } from '../../components/Button.jsx'
+import { SplitHeading } from '../../components/Motion.jsx'
 
 // TODO approved contact details — the copy document lists these as "to confirm".
 const CONTACT_EMAIL = 'hello@thevenuegypsy.com'
@@ -66,6 +67,7 @@ export default function Contact() {
         description="Where are you dreaming of going? Tell us what kind of place you are looking for, or get in touch about a venue or destination featured on The Venue Gypsy."
       />
       <PageHero
+        motion
         eyebrow="Contact & enquiries"
         title={<em>Where are you dreaming of going?</em>}
         subtitle="Tell us what kind of place you are looking for, or get in touch about a venue or destination featured on The Venue Gypsy. We would love to hear what you are hoping to discover."
@@ -76,7 +78,7 @@ export default function Contact() {
 
       <section id="enquiry" className="mx-auto grid max-w-7xl scroll-mt-24 gap-16 px-6 py-20 sm:py-28 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
         <Reveal className="lg:sticky lg:top-28 lg:self-start">
-          <h2 className="font-display text-4xl leading-[1.05] sm:text-5xl">Contact details</h2>
+          <SplitHeading className="font-display text-4xl leading-[1.05] sm:text-5xl">Contact details</SplitHeading>
           <div className="mt-8 text-sm text-coffee/70">
             <a href={`mailto:${CONTACT_EMAIL}`} className="mt-2 block text-base hover:text-deep-blue">
               {CONTACT_EMAIL}

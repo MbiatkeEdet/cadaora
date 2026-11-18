@@ -1,6 +1,21 @@
 import { useRef } from 'react'
 import { afterIntro, gsap, prefersReducedMotion, SplitText, useGSAP } from '../lib/motion.js'
 
+/**
+ * Scroll trigger for a reveal: plays as the element comes up into view and
+ * plays backwards (a little quicker) when you scroll back up past it, so it
+ * reveals again on the next pass down.
+ */
+function revealOnScroll(trigger, start = 'top 90%') {
+  return {
+    trigger,
+    start,
+    toggleActions: 'none none none none',
+    onEnter: (self) => self.animation.timeScale(1).play(),
+    onLeaveBack: (self) => self.animation.timeScale(1.8).reverse(),
+  }
+}
+
 // Scroll-led motion primitives (after the Sarah Haywood reference): masked line
 // reveals, a hero that shrinks into a card, stacked sticky cards, and framed
 // parallax images. Every one renders static content under reduced motion.
@@ -20,7 +35,7 @@ export function SplitHeading({ as: Tag = 'h2', className = '', children, waitFor
           ease: 'power4.out',
           stagger: 0.09,
           delay: delay / 1000,
-          scrollTrigger: trigger ? { trigger: el, start: 'top 90%', once: true } : undefined,
+          scrollTrigger: trigger ? revealOnScroll(el) : undefined,
         })
 
       if (!waitForIntro) {
@@ -29,12 +44,19 @@ export function SplitHeading({ as: Tag = 'h2', className = '', children, waitFor
       }
 
       gsap.set(el, { autoAlpha: 0 })
+      let cancelled = false
       const play = contextSafe(() => {
+        if (cancelled) return
         const split = SplitText.create(el, { type: 'lines', mask: 'lines' })
         gsap.set(el, { autoAlpha: 1 })
         animate(split.lines, false)
       })
-      return afterIntro(play)
+      // split only once the web fonts are in, so the line breaks are the real ones
+      const offIntro = afterIntro(() => document.fonts.ready.then(play))
+      return () => {
+        cancelled = true
+        offIntro()
+      }
     },
     { scope: ref },
   )
@@ -46,7 +68,7 @@ export function SplitHeading({ as: Tag = 'h2', className = '', children, waitFor
   )
 }
 
-/** Fades/rises a block once in view (GSAP version of Reveal, for use inside animated sections). */
+/** Fades/rises a block as it comes into view, and back out when you scroll up past it. */
 export function FadeUp({ as: Tag = 'div', className = '', children, delay = 0, waitForIntro = false, ...rest }) {
   const ref = useRef(null)
   useGSAP(
@@ -54,7 +76,7 @@ export function FadeUp({ as: Tag = 'div', className = '', children, delay = 0, w
       if (prefersReducedMotion()) return undefined
       const vars = { y: 28, autoAlpha: 0, duration: 1, ease: 'power3.out', delay: delay / 1000 }
       if (!waitForIntro) {
-        gsap.from(ref.current, { ...vars, scrollTrigger: { trigger: ref.current, start: 'top 92%', once: true } })
+        gsap.from(ref.current, { ...vars, scrollTrigger: revealOnScroll(ref.current, 'top 92%') })
         return undefined
       }
       gsap.set(ref.current, { autoAlpha: 0 })
@@ -95,7 +117,7 @@ export function ShrinkHero({ className = '', media, children }) {
   )
   return (
     <section ref={ref} className={`relative h-[100svh] w-full ${className}`}>
-      <div data-card className="absolute inset-0 overflow-hidden bg-midnight will-change-[clip-path]">
+      <div data-card className="absolute inset-0 overflow-hidden bg-black will-change-[clip-path]">
         <div data-media className="absolute inset-0">
           {media}
         </div>
@@ -105,12 +127,18 @@ export function ShrinkHero({ className = '', media, children }) {
   )
 }
 
+const STACK_TOP_VH = 10
+const STACK_STEP_PX = 14
+
 /**
- * Full-width rounded image cards that stick in turn; each card scales back and
- * dims as the next one slides over it.
+ * Full-width rounded image cards that stick in turn. As each card slides in it
+ * brightens into place while the one beneath recedes, softly dims and blurs out
+ * of focus (sharpening again when uncovered) — animated only with transform and
+ * opacity (GPU-friendly), smoothed behind the scroll rather than locked to every wheel tick.
  */
-export function StackCards({ items, renderCard, className = '' }) {
+export function StackCards({ items, renderCard, getImage = (item) => item.image, className = '' }) {
   const ref = useRef(null)
+  const still = prefersReducedMotion()
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
@@ -118,12 +146,18 @@ export function StackCards({ items, renderCard, className = '' }) {
       cards.forEach((card, i) => {
         const next = cards[i + 1]
         if (!next) return
-        gsap.to(card.querySelector('[data-stack-inner]'), {
-          scale: 0.92,
-          filter: 'brightness(0.55)',
-          ease: 'none',
-          scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 12%', scrub: true },
-        })
+        const settle = () => `top ${(window.innerHeight * STACK_TOP_VH) / 100 + (i + 1) * STACK_STEP_PX}px`
+        gsap
+          .timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: { trigger: next, start: 'top bottom', end: settle, scrub: 0.9, invalidateOnRefresh: true },
+          })
+          // outgoing card recedes, dims a little and slips out of focus (crossfade to its pre-blurred twin)
+          .fromTo(card.querySelector('[data-stack-inner]'), { scale: 1 }, { scale: 0.95, force3D: true }, 0)
+          .fromTo(card.querySelector('[data-stack-blur]'), { opacity: 0 }, { opacity: 1 }, 0)
+          .fromTo(card.querySelector('[data-stack-shade]'), { opacity: 0 }, { opacity: 0.28 }, 0)
+          // incoming card arrives slightly dim and brightens as it settles
+          .fromTo(next.querySelector('[data-stack-shade]'), { opacity: 0.3 }, { opacity: 0 }, 0)
       })
     },
     { scope: ref },
@@ -135,10 +169,31 @@ export function StackCards({ items, renderCard, className = '' }) {
           key={i}
           data-stack-card
           className="sticky mb-[8vh] last:mb-0"
-          style={{ top: `calc(10vh + ${i * 14}px)` }}
+          style={{ top: `calc(${STACK_TOP_VH}vh + ${i * STACK_STEP_PX}px)` }}
         >
-          <div data-stack-inner className="origin-top will-change-transform">
+          <div data-stack-inner className="relative origin-top will-change-transform">
             {renderCard(item, i)}
+            {!still && getImage(item) && (
+              // drawn blurred once; scrolling only fades it in and out
+              <div
+                data-stack-blur
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 overflow-hidden rounded-[1.5rem] opacity-0 will-change-[opacity]"
+              >
+                <img
+                  src={getImage(item)}
+                  alt=""
+                  decoding="async"
+                  className="h-full w-full scale-[1.08] object-cover blur-[18px]"
+                />
+                <div className="absolute inset-0 bg-black/25" />
+              </div>
+            )}
+            <div
+              data-stack-shade
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-[1.5rem] bg-black opacity-0 will-change-[opacity]"
+            />
           </div>
         </div>
       ))}
@@ -146,7 +201,7 @@ export function StackCards({ items, renderCard, className = '' }) {
   )
 }
 
-/** Image in a rounded frame: unveils once on entry, then drifts gently against the scroll. */
+/** Image in a rounded frame: unveils on entry (re-veils when you scroll back up), and drifts gently against the scroll. */
 export function ParallaxImage({ src, alt = '', className = '', imgClassName = '', strength = 7, priority = false }) {
   const ref = useRef(null)
   useGSAP(
@@ -160,7 +215,7 @@ export function ParallaxImage({ src, alt = '', className = '', imgClassName = ''
           clipPath: 'inset(0% 0% 0% 0%)',
           duration: 1.4,
           ease: 'power3.out',
-          scrollTrigger: { trigger: ref.current, start: 'top 92%', once: true },
+          scrollTrigger: revealOnScroll(ref.current, 'top 92%'),
         },
       )
       gsap.fromTo(
@@ -176,7 +231,7 @@ export function ParallaxImage({ src, alt = '', className = '', imgClassName = ''
     { scope: ref },
   )
   return (
-    <div ref={ref} className={`relative overflow-hidden rounded-2xl bg-pearl-soft ${className}`}>
+    <div ref={ref} className={`relative overflow-hidden rounded-2xl bg-black/5 ${className}`}>
       <img
         src={src}
         alt={alt}

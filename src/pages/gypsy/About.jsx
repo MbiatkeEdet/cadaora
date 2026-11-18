@@ -2,6 +2,7 @@ import Seo from '../../components/Seo.jsx'
 import PageHero from '../../components/PageHero.jsx'
 import Reveal from '../../components/Reveal.jsx'
 import Button, { Arrow } from '../../components/Button.jsx'
+import { SplitHeading } from '../../components/Motion.jsx'
 import ContourArt from '../../components/ContourArt.jsx'
 
 const audiences = [
@@ -22,6 +23,7 @@ export default function About() {
         description="A curiosity for places. A perspective on possibility. The Venue Gypsy was born from a love of discovering remarkable places and a professional life shaped by destination events, travel and venue scouting."
       />
       <PageHero
+        motion
         eyebrow="About The Venue Gypsy"
         title={
           <>
@@ -68,35 +70,31 @@ export default function About() {
       <section className="relative overflow-hidden bg-coffee text-linen">
         <ContourArt seed={88} color="#f28c40" className="absolute inset-0 h-full w-full opacity-25" lines={10} />
         <div className="relative mx-auto max-w-7xl px-6 py-24 text-center sm:py-32">
-          <Reveal>
-            <p className="font-display text-3xl italic leading-tight sm:text-5xl md:text-6xl">
-              We travel. We discover.
-              <br />
-              We experience. We share.
-            </p>
-          </Reveal>
+          <SplitHeading as="p" className="font-display text-4xl italic leading-tight sm:text-6xl md:text-7xl">
+            We travel. We discover.
+            <br />
+            We experience. We share.
+          </SplitHeading>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
-        <Reveal className="max-w-2xl">
-          <h2 className="font-display text-4xl leading-[1.05] sm:text-5xl">Who we are for</h2>
-        </Reveal>
+        <SplitHeading className="max-w-2xl font-display text-4xl leading-[1.05] sm:text-6xl">Who we are for</SplitHeading>
         <ol className="mt-12 divide-y divide-linen-line">
           {audiences.map((a, i) => (
-            <Reveal as="li" key={a} delay={i * 60} className="flex items-baseline gap-6 py-6 sm:gap-10">
+            <li key={a} className="flex items-baseline gap-6 py-7 sm:gap-10 sm:py-8">
               <span className="eyebrow w-8 shrink-0 text-deep-blue">0{i + 1}</span>
-              <span className="text-base leading-relaxed text-coffee/85 sm:text-lg">{a}</span>
-            </Reveal>
+              <SplitHeading as="span" className="block font-display text-2xl italic leading-snug text-coffee/90 sm:text-3xl">
+                {a}
+              </SplitHeading>
+            </li>
           ))}
         </ol>
       </section>
 
       <section className="border-t border-linen-line bg-linen-deep">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-24 sm:py-32 lg:grid-cols-2 lg:items-center">
-          <Reveal>
-            <h2 className="font-display text-4xl leading-[1.05] sm:text-5xl">Our long-term ambition</h2>
-          </Reveal>
+          <SplitHeading className="font-display text-4xl leading-[1.05] sm:text-6xl">Our long-term ambition</SplitHeading>
           <Reveal delay={120}>
             <p className="text-base leading-relaxed text-coffee/80 sm:text-lg">
               To become a trusted global resource for discovering where extraordinary events and experiences can happen

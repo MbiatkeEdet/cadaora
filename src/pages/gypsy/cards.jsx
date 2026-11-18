@@ -1,17 +1,13 @@
 import { Link } from 'react-router-dom'
 import ContourArt from '../../components/ContourArt.jsx'
 import { Arrow } from '../../components/Button.jsx'
+import { ParallaxImage } from '../../components/Motion.jsx'
 
 export function VenueCard({ venue }) {
   return (
     <Link to={`/venue-gypsy/venues/${venue.slug}`} className="group block">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-linen-deep">
-        <img
-          src={venue.images[0]}
-          alt={venue.name}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-        />
+      <div className="relative">
+        <ParallaxImage src={venue.images[0]} alt={venue.name} className="aspect-[4/5]" />
         <span className="eyebrow absolute left-4 top-4 rounded-full bg-linen/90 px-3 py-1.5 text-coffee backdrop-blur">
           {venue.type}
         </span>
@@ -37,14 +33,9 @@ export function DestinationCard({ destination, compact = false }) {
   return (
     <Link
       to={`/venue-gypsy/destinations/${destination.slug}`}
-      className={`group relative flex ${compact ? 'h-64' : 'h-80'} flex-col justify-end overflow-hidden rounded-sm bg-coffee p-6 text-white`}
+      className={`group relative flex ${compact ? 'h-64' : 'h-80'} flex-col justify-end overflow-hidden rounded-2xl bg-coffee p-6 text-white`}
     >
-      <img
-        src={destination.image}
-        alt={destination.name}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-      />
+      <ParallaxImage src={destination.image} alt={destination.name} className="!absolute inset-0 !rounded-none" />
       <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/25 to-transparent" />
       <ContourArt seed={destination.seed} color="#ffffff" className="absolute inset-0 h-full w-full opacity-30" />
       <div className="relative z-10">
@@ -61,14 +52,7 @@ export function ArticleCard({ article, featured = false }) {
   const date = new Date(article.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
   return (
     <Link to={`/venue-gypsy/journal/${article.slug}`} className="group block">
-      <div className={`overflow-hidden rounded-sm bg-linen-deep ${featured ? 'aspect-[16/9]' : 'aspect-[3/2]'}`}>
-        <img
-          src={article.image}
-          alt=""
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-        />
-      </div>
+      <ParallaxImage src={article.image} className={featured ? 'aspect-[16/9]' : 'aspect-[3/2]'} />
       <p className="eyebrow mt-5 text-deep-blue">{article.category}</p>
       <h3 className={`mt-2 font-display leading-tight ${featured ? 'text-3xl sm:text-4xl' : 'text-2xl'}`}>{article.title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-coffee/65">{article.dek}</p>

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { ScrollTrigger } from '../../lib/motion.js'
 import Seo from '../../components/Seo.jsx'
 import PageHero from '../../components/PageHero.jsx'
 import Reveal from '../../components/Reveal.jsx'
@@ -15,6 +16,12 @@ const descriptions = {
 
 export default function Journal() {
   const [category, setCategory] = useState('All')
+
+  // the list changed height: recompute every scroll trigger below it
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => ScrollTrigger.refresh())
+    return () => window.cancelAnimationFrame(id)
+  }, [category])
   const sorted = [...articles].sort((a, b) => (a.date < b.date ? 1 : -1))
   const shown = category === 'All' ? sorted : sorted.filter((a) => a.category === category)
   const [lead, ...rest] = shown
@@ -26,6 +33,7 @@ export default function Journal() {
         description="Stories from the places we discover: field notes, venue features, destination guides and observations from the road."
       />
       <PageHero
+        motion
         eyebrow="The Journal"
         title="Stories from the places we discover."
         subtitle="The Journal is where discovery becomes a story. Through field notes, venue features, destination guides and observations from the road, we share the places, details and ideas that make us curious."

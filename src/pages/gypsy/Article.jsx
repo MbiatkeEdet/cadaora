@@ -1,6 +1,7 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Seo from '../../components/Seo.jsx'
 import Reveal from '../../components/Reveal.jsx'
+import { FadeUp, ParallaxImage, SplitHeading } from '../../components/Motion.jsx'
 import { Arrow } from '../../components/Button.jsx'
 import { articles, getArticle } from '../../data/gypsy/journal.js'
 import { getVenue } from '../../data/gypsy/venues.js'
@@ -23,25 +24,27 @@ export default function Article() {
       <Seo title={`${article.title} | The Venue Gypsy Journal`} description={article.dek} />
 
       <section className="mx-auto max-w-3xl px-6 pb-10 pt-36 sm:pt-44">
-        <Reveal>
+        <FadeUp waitForIntro key={slug}>
           <Link to="/venue-gypsy/journal" className="eyebrow inline-flex items-center gap-2 text-coffee/60 hover:text-deep-blue">
             <Arrow className="rotate-180" /> The Journal
           </Link>
           <p className="eyebrow mt-8 text-deep-blue">{article.category}</p>
-          <h1 className="mt-4 font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">{article.title}</h1>
+        </FadeUp>
+        <SplitHeading as="h1" waitForIntro delay={120} key={`t-${slug}`} className="mt-4 font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+          {article.title}
+        </SplitHeading>
+        <FadeUp waitForIntro delay={400} key={`d-${slug}`}>
           <p className="mt-6 text-lg leading-relaxed text-coffee/75">{article.dek}</p>
           <p className="mt-5 text-xs text-coffee/45">
             {date} · {article.readTime} read
           </p>
-        </Reveal>
+        </FadeUp>
       </section>
 
-      <Reveal className="mx-auto max-w-5xl px-6">
-        <div className="aspect-[16/9] overflow-hidden rounded-sm bg-linen-deep">
-          <img src={article.image} alt="" className="h-full w-full object-cover" />
-        </div>
+      <div className="mx-auto max-w-5xl px-6">
+        <ParallaxImage key={article.image} src={article.image} priority className="aspect-[16/9]" />
         {article.imageCredit && <p className="mt-2 text-right text-[0.6rem] uppercase tracking-widest text-coffee/40">{article.imageCredit}</p>}
-      </Reveal>
+      </div>
 
       <section className="mx-auto max-w-3xl px-6 py-16 sm:py-20">
         <div className="space-y-6 text-lg leading-relaxed text-coffee/85">
@@ -76,9 +79,7 @@ export default function Article() {
       )}
 
       <section className="mx-auto max-w-7xl px-6 py-20 sm:py-28">
-        <Reveal>
-          <h2 className="font-display text-3xl sm:text-4xl">More from the Journal</h2>
-        </Reveal>
+        <SplitHeading className="font-display text-3xl sm:text-5xl">More from the Journal</SplitHeading>
         <div className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {more.map((a, i) => (
             <Reveal key={a.slug} delay={i * 70}>

@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { NavLink, Outlet, Link } from "react-router-dom"
+import { useEffect, useRef, useState } from 'react'
+import { NavLink, Outlet, Link, useLocation } from 'react-router-dom'
+import ContourArt from '../../components/ContourArt.jsx'
+import { smooth, useSmoothScroll } from '../../lib/motion.js'
 
 const links = [
   { to: '/venue-gypsy', label: 'Home', end: true },
@@ -20,120 +22,147 @@ export function GypsyWordmark({ className = '' }) {
 }
 
 export default function GypsyLayout() {
+  useSmoothScroll()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const toggleRef = useRef(null)
+  const firstLinkRef = useRef(null)
 
+  // solid once past the top; tucked away while scrolling down, back on the way up
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    let lastY = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 40)
+      if (Math.abs(y - lastY) > 6) {
+        setHidden(y > lastY && y > 160)
+        lastY = y
+      }
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // menu open: freeze the page, move focus in, close on Escape, hand focus back afterwards
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : ''
+    if (!open) return undefined
+    const toggle = toggleRef.current
+    document.body.style.overflow = 'hidden'
+    smooth.lenis?.stop()
+    const t = window.setTimeout(() => firstLinkRef.current?.focus(), 350)
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
     return () => {
+      window.clearTimeout(t)
+      window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
+      smooth.lenis?.start()
+      toggle?.focus({ preventScroll: true })
     }
   }, [open])
 
-  const solid = scrolled || open
-  const tone = solid ? 'text-coffee' : 'text-white'
+  const { pathname } = useLocation()
+  // journal articles open on linen, not on a dark photo, so the header starts dark there
+  const lightTop = /^\/venue-gypsy\/journal\/[^/]+$/.test(pathname)
+  const close = () => setOpen(false)
+  const solid = scrolled && !open
+  const tone = open || scrolled || lightTop ? 'text-coffee' : 'text-white'
 
   return (
-    <div className="brand-gypsy min-h-screen">
+    <div className="brand-gypsy min-h-screen bg-linen-deep">
       <header
-        className={`fixed inset-x-0 top-0 transition-colors duration-500 ${open ? 'z-[70]' : 'z-50'} ${
-          scrolled && !open ? 'bg-linen/92 shadow-[0_1px_0_0_var(--color-linen-line)] backdrop-blur' : 'bg-transparent'
+        className={`fixed inset-x-0 top-0 transition-[transform,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          open ? 'z-[70]' : 'z-50'
+        } ${hidden && !open ? '-translate-y-full' : 'translate-y-0'} ${
+          solid ? 'bg-linen/92 shadow-[0_1px_0_0_var(--color-linen-line)] backdrop-blur' : 'bg-transparent'
         }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link to="/venue-gypsy" className={tone} aria-label="The Venue Gypsy home">
-            <GypsyWordmark />
-          </Link>
-
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
-            {links.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                end={l.end}
-                className={({ isActive }) =>
-                  `eyebrow border-b pb-1 transition-colors ${
-                    isActive
-                      ? `border-sun-orange ${solid ? 'text-coffee' : 'text-white'}`
-                      : `border-transparent ${solid ? 'text-coffee/60 hover:text-coffee' : 'text-white/70 hover:text-white'}`
-                  }`
-                }
-              >
-                {l.label}
-              </NavLink>
-            ))}
+        <div className={`mx-auto grid max-w-[96rem] grid-cols-[1fr_auto_1fr] items-center px-5 py-4 sm:px-10 ${tone}`}>
+          <div>
             <Link
               to="/venue-gypsy/contact"
-              className="eyebrow rounded-full bg-sun-orange px-5 py-2.5 text-coffee transition hover:brightness-95"
+              onClick={close}
+              className="eyebrow inline-block border-b border-current/40 pb-0.5 transition-colors hover:border-sun-orange hover:text-sun-orange"
             >
               Enquire
             </Link>
-          </nav>
+          </div>
 
-          <button
-            type="button"
-            className={`relative z-[60] flex h-11 w-11 items-center justify-center lg:hidden ${open ? 'text-coffee' : tone}`}
-            onClick={() => setOpen((o) => !o)}
-            aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-            aria-expanded={open}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              {open ? (
-                <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-              ) : (
-                <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
-              )}
-            </svg>
-          </button>
+          <Link to="/venue-gypsy" onClick={close} aria-label="The Venue Gypsy home">
+            <GypsyWordmark className="text-[1.15rem] sm:text-[1.35rem]" />
+          </Link>
+
+          <div className="flex justify-end">
+            <button
+              ref={toggleRef}
+              type="button"
+              onClick={() => setOpen((o) => !o)}
+              aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={open}
+              aria-controls="gypsy-menu"
+              className="group relative flex h-11 w-11 items-center justify-center"
+            >
+              <span
+                className={`absolute h-px w-8 bg-current transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+                  open ? 'rotate-45' : '-translate-y-[4px] group-hover:-translate-y-[5px]'
+                }`}
+              />
+              <span
+                className={`absolute h-px w-8 bg-current transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+                  open ? '-rotate-45' : 'translate-y-[4px] group-hover:translate-y-[5px]'
+                }`}
+              />
+            </button>
+          </div>
         </div>
       </header>
 
+      {/* Full-screen menu */}
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-linen px-6 text-coffee transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] lg:hidden ${
-          open ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
+        id="gypsy-menu"
+        className={`fixed inset-0 z-[60] flex flex-col bg-linen text-coffee transition-[clip-path,visibility] duration-[900ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          open ? 'visible [clip-path:inset(0_0_0_0)]' : 'invisible [clip-path:inset(0_0_100%_0)]'
         }`}
         aria-hidden={!open}
       >
-        <nav className="flex w-full max-w-md flex-col items-center gap-5 text-center" aria-label="Mobile">
-          {links.map((l, index) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.end}
-              tabIndex={open ? 0 : -1}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `font-display text-3xl italic transition-all duration-500 sm:text-4xl ${
-                  open ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-                } ${isActive ? 'text-deep-blue' : 'text-coffee/70 hover:text-coffee'}`
-              }
-              style={{ transitionDelay: open ? `${index * 60 + 100}ms` : '0ms' }}
-            >
-              {l.label}
-            </NavLink>
-          ))}
-          <Link
-            to="/venue-gypsy/contact"
-            tabIndex={open ? 0 : -1}
-            onClick={() => setOpen(false)}
-            className={`eyebrow mt-4 rounded-full bg-sun-orange px-8 py-3.5 text-coffee transition-all duration-500 ${
-              open ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}
-            style={{ transitionDelay: open ? '500ms' : '0ms' }}
-          >
-            Enquire
-          </Link>
+        <ContourArt seed={31} color="#088dac" className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" lines={12} />
+        <nav className="relative flex flex-1 flex-col items-center justify-center px-6 pt-20" aria-label="Primary">
+          <ul className="flex flex-col items-center gap-1 sm:gap-2">
+            {links.map((l, i) => (
+              <li key={l.to} className="overflow-hidden">
+                <NavLink
+                  ref={i === 0 ? firstLinkRef : undefined}
+                  to={l.to}
+                  end={l.end}
+                  tabIndex={open ? 0 : -1}
+                  onClick={close}
+                  className={({ isActive }) =>
+                    `group flex items-baseline gap-3 py-1 transition-[transform,color] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:gap-5 ${
+                      open ? 'translate-y-0' : 'translate-y-[110%]'
+                    } ${isActive ? 'text-deep-blue' : 'text-coffee hover:text-sun-orange'}`
+                  }
+                  style={{ transitionDelay: open ? `${180 + i * 70}ms` : '0ms' }}
+                >
+                  <span className="font-display text-sm text-coffee/40 sm:text-base">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-display text-[clamp(2.4rem,7.4vw,5.6rem)] italic leading-[1.05] tracking-tight">{l.label}</span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
         </nav>
+        <p
+          className={`relative px-6 pb-10 text-center font-display text-lg italic text-coffee/60 transition-opacity duration-700 ${
+            open ? 'opacity-100 delay-700' : 'opacity-0'
+          }`}
+        >
+          Discovering places worth celebrating in.
+        </p>
       </div>
 
-      <main>
+      {/* the page lifts away to reveal the footer beneath it */}
+      <main className="relative z-10 overflow-clip rounded-b-[2rem] bg-linen shadow-[0_30px_60px_-30px_rgba(90,62,41,0.3)]">
         <Outlet />
       </main>
 
@@ -144,8 +173,8 @@ export default function GypsyLayout() {
 
 function GypsyFooter() {
   return (
-    <footer className="border-t border-linen-line bg-linen-deep">
-      <div className="mx-auto max-w-7xl px-6 py-16">
+    <footer className="relative z-0 bg-linen-deep lg:sticky lg:bottom-0">
+      <div className="mx-auto max-w-7xl px-6 pb-12 pt-24">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <GypsyWordmark className="text-coffee" />

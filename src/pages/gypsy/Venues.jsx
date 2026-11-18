@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { ScrollTrigger } from '../../lib/motion.js'
 import Seo from '../../components/Seo.jsx'
 import PageHero from '../../components/PageHero.jsx'
 import Reveal from '../../components/Reveal.jsx'
@@ -8,6 +9,12 @@ import { VenueCard } from './cards.jsx'
 export default function Venues() {
   const [type, setType] = useState('All')
   const [region, setRegion] = useState('All')
+
+  // the grid changed height: recompute every scroll trigger below it
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => ScrollTrigger.refresh())
+    return () => window.cancelAnimationFrame(id)
+  }, [type, region])
 
   const availableTypes = useMemo(() => VENUE_TYPES.filter((t) => venues.some((v) => v.type === t)), [])
   const availableRegions = useMemo(() => REGIONS.filter((r) => venues.some((v) => v.region === r)), [])
@@ -21,6 +28,7 @@ export default function Venues() {
         description="Explore a curated collection of venues with the character, setting and possibilities to host something special."
       />
       <PageHero
+        motion
         eyebrow="Discover venues"
         title="Find a place that feels like the one."
         subtitle="Explore a curated collection of venues with the character, setting and possibilities to host something special. Each feature is designed to help you look beyond the address and imagine the experience."
